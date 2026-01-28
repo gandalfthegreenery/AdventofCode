@@ -1,9 +1,12 @@
-These are solutions for day 1 of 2025's Advent of Code competition. The problem description can be found at https://adventofcode.com/2025/day/1
+These are solutions for day 4 of 2025's Advent of Code competition. The problem description can be found at https://adventofcode.com/2025/day/4
 
-But to summarize, the goal is to find the number of times a 100 value dial lock lands on (for part 1) or passes over (for part 2) the number 0.
+But to summarize, the goal is to find the number of @ symbols in a 2d grid of @ and . symbols who have fewer than 4 @ symbols in any of the adjacent 8 locations. 
 
-The input is a series of values in the format L(R)XXXX, where L corresponds to a left turn on the dial (values decrease), R corresponds to a right turn on the dial (values increase) and XXXX is any positive integer, referring to how far the dial is turned to the left or right relative to its current position.
+The input is a series of strings consisting of @ and . where each line refers to a row, and the position in that line is the column.
 
-Submission 1 is a simple counter that increments anytime the current value modulo 100 is 0.
+This was accomplished by creating a 2d array of the positions of the @ symbols, and another 2d array called neighbors, which is 2 rows and 2 columns larger than the positions array. As the position array is read in from the file, it populates the neighbors array by adding 1 to each value in the 3x3 square neighbors array surrounding the position value.
 
-Submission 2 is a state-based value check, that reduces the distance to the number of whole rotations and a remainder, counts the number of whole rotations, then resolves the remainder by adding it with the current position, and increments once more if there is another pass/landing on zero during this resolution.
+The first printed line corresponds to the answer for part 1, and just counts the number of entries in the position array(ignoring the outside most columns and rows) which have a corresponding neighbor value <4. 
+
+The second printed line gives the solution to part 2, which asks, if the @ symbols with fewer than 4 neighbors were removed, and this was repeated again and again until all remaining @ symbols have 4 or more neighbors, how many total @ symbols would be removed?
+This was accomplished by iterating through the array until there are no changes to it, removing all @ symbols and reducing all neighbor @ values by 1, and incrementing a counter each time an @ symbol is removed.
