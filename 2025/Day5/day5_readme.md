@@ -1,4 +1,4 @@
-# Advent of Code 2025 – Day 5: Unique Values in Overlapping Ranges
+# Advent of Code 2025 – Day 5:
 
 ## Overview
 
