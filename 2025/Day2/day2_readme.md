@@ -1,13 +1,163 @@
 These are solutions for day 2 of 2025's Advent of Code competition. The problem description can be found at https://adventofcode.com/2025/day/2
+# Advent of Code 2025 – Day 2:
 
-But to summarize, the goal is to find the sum of all numbers within given ranges that have a repeated pattern of digits. For example, 4544-4546 would have 4545 as a valid repeated pattern of digits (45)(45). 
+## Overview
 
-The input is a series of ranges in csv format, for example the input xxxx-yyyy, zzzzzzz-aaaaaaaa would refer to two ranges from xxxx to yyyy and zzzzzzz to aaaaaaaa that must be searched for repeated values. The highest number range is 12 digits long, while the lowest is 2. (22-99) and (123456789999-123456799999) for example
-Submission 1 looks for values that are repeated only twice, and submission 2 looks for values that are repeated any number of times.
+This repository contains solutions to Day 2 of the 2025 Advent of Code challenge.
 
-These solutions do not perform a brute search on each value in the range, rather it generates a list of all possible patterened values within that range based on the number of times a pattern could be repeated given the number of digits in the range, then sums that value, reducing the computational need.
+The problem involves identifying and summing numbers within given ranges that exhibit **repeated digit patterns**. Two variations are considered:
 
-This is done by breaking down the range into the possible prime-value length subsets of characters in the range, and incrementing between the low and high value of the range, adding the value if applicable, and ignoring a value if it has already been counted.
-eg: 123456-678910. For this range, the factored value lengthed subsets are 1,2,3,6. We ignore 6, as in order for a pattern to be repeated, the length of the pattern must at most be half the length of the entire value. This leaves us with sublengths of 1, 2 and 3. For pattern lengths of 1, valid candidates are 111111,222222,333333,444444,555555,666666,777777,888888,999999, and we only add the values 2-6, as those are the only candidates in the given range. Moving on to two, we have 10,11,12,13,14,15,16.......97,98,99, of which only 12->67 are within the range (121212.....676767), taking care to pass over the already counted 22,33,44... And we perform the same process with repeated patterns of lenght 3. 
+* **Part 1:** Numbers formed by repeating a pattern exactly twice
+* **Part 2:** Numbers formed by repeating a pattern any number of times
 
-Helper functions were created to perform these counts based on the fraction of the range evenly divisible by the length. (halves, thirds, fifths, sevenths) and calculated for the appropriate ranges.
+The key challenge is handling extremely large ranges efficiently (up to 12-digit numbers) without brute-force iteration.
+
+---
+
+## Problem Description
+
+You are given a list of numeric ranges in CSV format:
+
+```
+xxxx-yyyy, zzzzzzz-aaaaaaaa
+```
+
+Each range defines a search interval ([start, end]).
+
+A number is considered valid if it can be constructed by repeating a smaller digit pattern. For example:
+
+```
+4545 = (45)(45)
+777777 = (7)(7)(7)(7)(7)(7)
+```
+
+---
+
+## Objectives
+
+### Part 1
+
+Sum all values within each range that consist of a pattern repeated **exactly twice**.
+
+### Part 2
+
+Sum all values within each range that consist of a pattern repeated **any number of times**.
+
+---
+
+## Approach
+
+### ❌ Naive Approach (Not Used)
+
+A brute-force solution would:
+
+* Iterate through every number in each range
+* Check whether it forms a repeated pattern
+
+This becomes computationally infeasible for large ranges (up to (10^{12})).
+
+---
+
+### ✅ Optimized Pattern Generation
+
+Instead of checking every number, this solution:
+
+1. **Identifies valid pattern lengths**
+
+   * For a number with (n) digits, valid pattern lengths must divide (n)
+   * Pattern length must be ≤ (n/2)
+
+2. **Generates candidate patterns directly**
+
+   * For each valid pattern length (k):
+
+     * Iterate over all possible base patterns of length (k)
+     * Construct full numbers by repeating the pattern
+
+3. **Filters candidates within range**
+
+   * Only include values between `start` and `end`
+
+4. **Avoids double-counting**
+
+   * Ensures numbers generated from smaller patterns (e.g., `22`, `33`) are not counted multiple times
+
+---
+
+## Example
+
+Range:
+
+```id=
+123456 - 678910
+```
+
+Valid pattern lengths:
+
+* 1 → generates values like `111111`, `222222`, ...
+* 2 → generates `121212`, `343434`, ...
+* 3 → generates `123123`, `456456`, ...
+
+Only values within the range are included in the final sum.
+
+---
+
+## Implementation Details
+
+Helper functions are used for each pattern length:
+
+* `checking_halves` → patterns repeated 2 times
+* `checking_thirds` → patterns repeated 3 times
+* `checking_fifths` → patterns repeated 5 times
+* `checking_sevenths` → patterns repeated 7 times
+
+Each function:
+
+* Adjusts range boundaries to match valid digit lengths
+* Iterates over base patterns
+* Constructs repeated values using string multiplication
+* Accumulates valid sums
+
+---
+
+## Usage
+
+1. Place input file in the project directory:
+
+   ```
+   AdventofCodeDay2.txt
+   ```
+
+2. Run:
+
+```bash 
+python solution.py
+```
+
+---
+
+## Performance
+
+| Approach      | Time Complexity       | Notes                                  |
+| ------------- | --------------------- | -------------------------------------- |
+| Brute Force   | O(range size)         | Infeasible for large inputs            |
+| This Solution | O(number of patterns) | Efficient due to structured generation |
+
+---
+
+## Key Insights
+
+* Repeated-pattern numbers are **highly structured**, allowing direct generation
+* Valid candidates can be derived from **factorizations of digit length**
+* Avoiding brute force dramatically improves performance on large ranges
+* Careful handling is required to prevent **duplicate counting across pattern sizes**
+
+---
+
+## Future Improvements
+
+* Generalize helper functions into a single parameterized routine
+* Add validation tests for overlapping pattern cases
+* Improve readability by consolidating repeated logic
+
+---
