@@ -1,4 +1,4 @@
-# Advent of Code 2025 – Day 6: Custom Equation Parsing
+# Advent of Code 2025 – Day 6:
 
 ## Overview
 
